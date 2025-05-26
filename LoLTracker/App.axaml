@@ -1,0 +1,23 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:LoLTracker.ViewModels;assembly=LoLTracker"
+			 x:Class="LoLTracker.App"
+             RequestedThemeVariant="Default">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+	
+	
+	<Application.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries/>
+			<ImageBrush x:Key="MainBackground" SourceRect="150 0 450 675" Stretch="UniformToFill" Source="/Assets/bg.jpg"/>
+			<ImageBrush x:Key="SearchIcon" Source="/Assets/searchicon.svg"/>
+			<vm:ProbabilityConverter x:Key="ProbabilityConverter"/>
+			<vm:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+			<vm:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+		</ResourceDictionary>
+	</Application.Resources>
+</Application>

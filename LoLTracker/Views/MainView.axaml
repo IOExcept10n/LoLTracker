@@ -1,0 +1,92 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:LoLTracker.ViewModels"
+			 xmlns:properties="clr-namespace:LoLTracker.Properties;assembly=LoLTracker"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
+             x:Class="LoLTracker.Views.MainView"
+             x:DataType="vm:MainViewModel"
+             BorderThickness="4"
+             BorderBrush="Orange"
+             Background="{StaticResource MainBackground}">
+	<Design.DataContext>
+		<vm:MainViewModel />
+	</Design.DataContext>
+	<Grid RowDefinitions="64,50,5*,50">
+		<Grid ColumnDefinitions="*,32" VerticalAlignment="Top">
+			<TextBox Name="RiotIdInput"
+                     Watermark="{x:Static properties:Resources.InputRiotId}"
+                     Margin="2"
+                     Text="{Binding RiotId, UpdateSourceTrigger=PropertyChanged}"/>
+			<Button Name="AcceptIdButton"
+                    Grid.Column="1"
+                    Margin="2"
+                    HorizontalAlignment="Stretch"
+                    Width="32"
+                    Height="32"
+                    Padding="0"
+                    VerticalAlignment="Stretch"
+                    Command="{Binding UpdateCommand}">
+				<Svg HorizontalAlignment="Stretch"
+                     VerticalAlignment="Stretch"
+                     Css=".Black { width=32; height=32; }"
+                     Path="avares://LoLTracker/Assets/searchicon.svg"/>
+			</Button>
+		</Grid>
+
+		<ContentControl Grid.Row="0" Grid.ColumnSpan="2" IsVisible="{Binding IsLoading}">
+			<ProgressBar IsIndeterminate="True" />
+		</ContentControl>
+		
+		<ContentControl Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                        IsVisible="{Binding IsStatisticsLoaded, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+			<TextBlock Text="{x:Static properties:Resources.EnterNickname}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+					   TextWrapping="Wrap"
+                       FontSize="24"
+                       TextAlignment="Center"/>
+		</ContentControl>
+
+		<TextBlock Grid.Row="1" Grid.ColumnSpan="2"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="24"
+				   Text="{Binding WinProbability, Converter={StaticResource ProbabilityConverter}}"
+                   Foreground="{Binding WinProbabilityColor}"
+                   IsVisible="{Binding IsStatisticsLoaded, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+		<Grid Grid.Row="2" ColumnDefinitions="*,*" RowDefinitions="*"
+              IsVisible="{Binding IsStatisticsLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
+			<ItemsControl Grid.Column="0" ItemsSource="{Binding AllyTeam}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate x:DataType="vm:PlayerViewModel">
+						<StackPanel Orientation="Horizontal">
+							<Image Source="{Binding ChampionIcon}" Width="32" Height="32"/>
+							<TextBlock Text="{Binding Nickname}" Margin="5,0"/>
+							<TextBlock Text="{Binding Efficiency}" Margin="5,0"/>
+						</StackPanel>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+			<ItemsControl Grid.Column="1" ItemsSource="{Binding EnemyTeam}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate x:DataType="vm:PlayerViewModel">
+						<StackPanel Orientation="Horizontal">
+							<Image Source="{Binding ChampionIcon}" Width="32" Height="32"/>
+							<TextBlock Text="{Binding Nickname}" Margin="5,0"/>
+							<TextBlock Text="{Binding Efficiency}" Margin="5,0"/>
+						</StackPanel>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</Grid>
+
+		<Grid Grid.Row="3" ColumnDefinitions="*,*"
+              IsVisible="{Binding IsStatisticsLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
+			<Image Source="{Binding AllyTeamIcon}" Width="64" Height="64" Margin="10"/>
+			<Image Source="{Binding EnemyTeamIcon}" Width="64" Height="64" Margin="10"/>
+		</Grid>
+	</Grid>
+</UserControl>

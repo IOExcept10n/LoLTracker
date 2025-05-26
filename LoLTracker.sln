@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoLTracker", "LoLTracker\LoLTracker.csproj", "{AFBA3FF8-E736-5450-B04F-78694C9690DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoLTracker.Android", "LoLTracker.Android\LoLTracker.Android.csproj", "{BBAF3E68-5993-EE4F-1CF7-CC53D55BFA20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoLTracker.Desktop", "LoLTracker.Desktop\LoLTracker.Desktop.csproj", "{DA3E0E14-8817-2D3B-7389-DAFC4820D343}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AFBA3FF8-E736-5450-B04F-78694C9690DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFBA3FF8-E736-5450-B04F-78694C9690DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFBA3FF8-E736-5450-B04F-78694C9690DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFBA3FF8-E736-5450-B04F-78694C9690DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBAF3E68-5993-EE4F-1CF7-CC53D55BFA20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBAF3E68-5993-EE4F-1CF7-CC53D55BFA20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBAF3E68-5993-EE4F-1CF7-CC53D55BFA20}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{BBAF3E68-5993-EE4F-1CF7-CC53D55BFA20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBAF3E68-5993-EE4F-1CF7-CC53D55BFA20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBAF3E68-5993-EE4F-1CF7-CC53D55BFA20}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{DA3E0E14-8817-2D3B-7389-DAFC4820D343}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA3E0E14-8817-2D3B-7389-DAFC4820D343}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA3E0E14-8817-2D3B-7389-DAFC4820D343}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA3E0E14-8817-2D3B-7389-DAFC4820D343}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {08ADB4F9-AE64-443F-9B46-6198E6F7C5E3}
+	EndGlobalSection
+EndGlobal
