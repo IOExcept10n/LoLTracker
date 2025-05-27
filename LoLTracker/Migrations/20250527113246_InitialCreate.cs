@@ -58,12 +58,15 @@ namespace LoLTracker.Migrations
                     Role = table.Column<string>(type: "TEXT", nullable: false),
                     Level = table.Column<int>(type: "INTEGER", nullable: false),
                     DetectorWardsPlaced = table.Column<int>(type: "INTEGER", nullable: false),
+                    StealthWardsPlaced = table.Column<int>(type: "INTEGER", nullable: false),
+                    TotalWardsPlaced = table.Column<int>(type: "INTEGER", nullable: false),
                     MagicDamageDealt = table.Column<int>(type: "INTEGER", nullable: false),
                     PhysicalDamageDealt = table.Column<int>(type: "INTEGER", nullable: false),
                     TotalDamageDealt = table.Column<int>(type: "INTEGER", nullable: false),
                     RiotIdGameName = table.Column<string>(type: "TEXT", nullable: false),
                     RiotIdTagLine = table.Column<string>(type: "TEXT", nullable: false),
-                    TeamPosition = table.Column<int>(type: "INTEGER", nullable: false)
+                    TeamPosition = table.Column<int>(type: "INTEGER", nullable: true),
+                    TeamId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -81,31 +84,33 @@ namespace LoLTracker.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    MatchId = table.Column<long>(type: "INTEGER", nullable: false),
                     TeamId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Win = table.Column<bool>(type: "INTEGER", nullable: false),
-                    MatchDtoGameId = table.Column<long>(type: "INTEGER", nullable: true)
+                    Win = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Teams", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Teams_Matches_MatchDtoGameId",
-                        column: x => x.MatchDtoGameId,
+                        name: "FK_Teams_Matches_MatchId",
+                        column: x => x.MatchId,
                         principalTable: "Matches",
-                        principalColumn: "GameId");
+                        principalColumn: "GameId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Bans",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    TeamId = table.Column<Guid>(type: "TEXT", nullable: false),
                     ChampionId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PickTurn = table.Column<int>(type: "INTEGER", nullable: false),
-                    TeamId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    PickTurn = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bans", x => new { x.ChampionId, x.PickTurn });
+                    table.PrimaryKey("PK_Bans", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Bans_Teams_TeamId",
                         column: x => x.TeamId,
@@ -130,9 +135,9 @@ namespace LoLTracker.Migrations
                 column: "MatchId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Teams_MatchDtoGameId",
+                name: "IX_Teams_MatchId",
                 table: "Teams",
-                column: "MatchDtoGameId");
+                column: "MatchId");
         }
 
         /// <inheritdoc />

@@ -17,9 +17,8 @@ namespace LoLTracker.Models
                 .HasKey(t => t.Id);
 
             modelBuilder.Entity<BanDto>()
-                .HasKey(b => new { b.ChampionId, b.PickTurn });
+                .HasKey(b => b.Id);
 
-            // Настройка отношений, если необходимо
             modelBuilder.Entity<TeamDto>()
                 .HasMany(t => t.Bans)
                 .WithOne()
@@ -30,10 +29,16 @@ namespace LoLTracker.Models
                 .HasKey(p => p.Id);
             modelBuilder.Entity<MatchDto>()
                 .HasKey(m => m.GameId);
+
             modelBuilder.Entity<MatchDto>()
                 .HasMany(m => m.Participants)
                 .WithOne(p => p.Match)
                 .HasForeignKey(p => p.MatchId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<MatchDto>()
+                .HasMany(m => m.Teams)
+                .WithOne(t => t.Match)
+                .HasForeignKey(t => t.MatchId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<RiotAccountDetails>()

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LoLTracker.Migrations
 {
     [DbContext(typeof(LeagueContext))]
-    [Migration("20250527074616_InitialCreate")]
+    [Migration("20250527113246_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -22,6 +22,10 @@ namespace LoLTracker.Migrations
 
             modelBuilder.Entity("LoLTracker.Models.Dto.BanDto", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("ChampionId")
                         .HasColumnType("INTEGER");
 
@@ -31,7 +35,7 @@ namespace LoLTracker.Migrations
                     b.Property<Guid>("TeamId")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("ChampionId", "PickTurn");
+                    b.HasKey("Id");
 
                     b.HasIndex("TeamId");
 
@@ -125,10 +129,19 @@ namespace LoLTracker.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("TeamPosition")
+                    b.Property<int>("StealthWardsPlaced")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("TeamPosition")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("TotalDamageDealt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TotalWardsPlaced")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -144,7 +157,7 @@ namespace LoLTracker.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<long?>("MatchDtoGameId")
+                    b.Property<long>("MatchId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("TeamId")
@@ -155,7 +168,7 @@ namespace LoLTracker.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MatchDtoGameId");
+                    b.HasIndex("MatchId");
 
                     b.ToTable("Teams");
                 });
@@ -202,9 +215,13 @@ namespace LoLTracker.Migrations
 
             modelBuilder.Entity("LoLTracker.Models.Dto.TeamDto", b =>
                 {
-                    b.HasOne("LoLTracker.Models.Dto.MatchDto", null)
+                    b.HasOne("LoLTracker.Models.Dto.MatchDto", "Match")
                         .WithMany("Teams")
-                        .HasForeignKey("MatchDtoGameId");
+                        .HasForeignKey("MatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Match");
                 });
 
             modelBuilder.Entity("LoLTracker.Models.Dto.MatchDto", b =>

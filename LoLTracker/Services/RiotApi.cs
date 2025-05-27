@@ -75,7 +75,7 @@ namespace LoLTracker.Services
         /// <param name="id">ID of the match to get the info.</param>
         public async Task<MatchDto> GetMatchInfo(string id)
         {
-            var response = await worker.BuildRequest(Endpoints.RuAddress)
+            var response = await worker.BuildRequest(Endpoints.EuAddress)
                                        .WithEndpoint(Endpoints.MatchById)
                                        .WithEndpoint(id)
                                        .WithParams(ApiKey, key)

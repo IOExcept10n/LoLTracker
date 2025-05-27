@@ -8,7 +8,7 @@ namespace LoLTracker.Services
     {
         public static double CalculateEfficiency(ParticipantDto participant, MatchDto match)
         {
-            throw new NotImplementedException();
+            return participant.TotalDamageDealt;
         }
 
         public static double CalculateWinProbability(double allyTeam, double enemyTeam)

@@ -13,14 +13,19 @@ namespace LoLTracker.Services
 
         public async Task<MatchDto> GetMatchInfoAsync(string matchId)
         {
-            var cachedMatch = await repository.Matches.FindAsync(matchId);
+            var cachedMatch = await repository.Matches.FindAsync(long.Parse(matchId[3..]));
             if (cachedMatch != null)
             {
+                await repository.Entry(cachedMatch)
+                    .Collection(x => x.Teams)
+                    .LoadAsync();
+                await repository.Entry(cachedMatch)
+                    .Collection(x => x.Participants)
+                    .LoadAsync();
                 return cachedMatch;
             }
 
             var matchInfo = await api.GetMatchInfo(matchId);
-
             repository.Matches.Add(matchInfo);
             await repository.SaveChangesAsync();
 
@@ -70,5 +75,4 @@ namespace LoLTracker.Services
         }
 
     }
-
 }

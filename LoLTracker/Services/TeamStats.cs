@@ -6,6 +6,6 @@ namespace LoLTracker.Services
     {
         public double TotalEfficiency { get; set; }
 
-        public List<PlayerStats> Players { get; set; }
+        public List<PlayerStats> Players { get; set; } = [];
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 using Newtonsoft.Json;
 
 namespace LoLTracker.Models.Dto
@@ -43,7 +44,37 @@ namespace LoLTracker.Models.Dto
         public int TotalDamageDealt { get; set; } = 0;
         public string RiotIdGameName { get; set; } = string.Empty;
         public string RiotIdTagLine { get; set; } = string.Empty;
-        public ChampionPosition TeamPosition { get; set; }
+        [JsonConverter(typeof(MyEnumConverter))]
+        public ChampionPosition? TeamPosition { get; set; }
         public TeamDto.MatchTeam TeamId { get; set; }
+
+        public class MyEnumConverter : JsonConverter
+        {
+            public override bool CanConvert(Type objectType)
+            {
+                return objectType == typeof(ChampionPosition?);
+            }
+
+            public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+            {
+                if (reader.TokenType == JsonToken.Null)
+                {
+                    return null;
+                }
+
+                var enumString = reader.Value?.ToString();
+                if (string.IsNullOrEmpty(enumString))
+                {
+                    return null;
+                }
+
+                return Enum.TryParse<ChampionPosition>(enumString, true, out var result) ? result : null;
+            }
+
+            public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+            {
+                writer.WriteValue(value?.ToString());
+            }
+        }
     }
 }
