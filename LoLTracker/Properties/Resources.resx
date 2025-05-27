@@ -125,10 +125,22 @@
   <data name="EnterNickname" xml:space="preserve">
     <value>Enter your nickname to get relevant info about the match.</value>
   </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ExceptionDetails" xml:space="preserve">
+    <value>Cannot calculate probability: </value>
+  </data>
   <data name="InputRiotId" xml:space="preserve">
     <value>Input your Riot ID (ex. MyNickname#1234)</value>
   </data>
+  <data name="Lose" xml:space="preserve">
+    <value>Lose</value>
+  </data>
   <data name="UseCorrectRiotId" xml:space="preserve">
     <value>Please input correct Riot ID</value>
+  </data>
+  <data name="Win" xml:space="preserve">
+    <value>Win</value>
   </data>
 </root>

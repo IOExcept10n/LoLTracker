@@ -3,18 +3,22 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:LoLTracker.ViewModels"
-			 xmlns:properties="clr-namespace:LoLTracker.Properties;assembly=LoLTracker"
+             xmlns:properties="clr-namespace:LoLTracker.Properties;assembly=LoLTracker"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
              x:Class="LoLTracker.Views.MainView"
              x:DataType="vm:MainViewModel"
              BorderThickness="4"
              BorderBrush="Orange"
              Background="{StaticResource MainBackground}">
+	<UserControl.Resources>
+		<SolidColorBrush x:Key="EnemyColor" Color="#80F08080"/>
+		<SolidColorBrush x:Key="AllyColor" Color="#80ADD8E6"/>
+	</UserControl.Resources>
 	<Design.DataContext>
 		<vm:MainViewModel />
 	</Design.DataContext>
-	<Grid RowDefinitions="64,50,5*,50">
-		<Grid ColumnDefinitions="*,32" VerticalAlignment="Top">
+	<Grid RowDefinitions="Auto, Auto, 5*, Auto">
+		<Grid ColumnDefinitions="*, 32" VerticalAlignment="Top">
 			<TextBox Name="RiotIdInput"
                      Watermark="{x:Static properties:Resources.InputRiotId}"
                      Margin="2"
@@ -35,58 +39,80 @@
 			</Button>
 		</Grid>
 
-		<ContentControl Grid.Row="0" Grid.ColumnSpan="2" IsVisible="{Binding IsLoading}">
+		<ContentControl Grid.Row="0" Grid.ColumnSpan="2" IsVisible="{Binding IsLoading}" VerticalAlignment="Bottom">
 			<ProgressBar IsIndeterminate="True" />
 		</ContentControl>
-		
+
 		<ContentControl Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="2"
+						Background="#30000000"
                         IsVisible="{Binding IsStatisticsLoaded, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
 			<TextBlock Text="{x:Static properties:Resources.EnterNickname}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
-					   TextWrapping="Wrap"
+                       TextWrapping="Wrap"
                        FontSize="24"
                        TextAlignment="Center"/>
 		</ContentControl>
 
-		<TextBlock Grid.Row="1" Grid.ColumnSpan="2"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   FontSize="24"
-				   Text="{Binding WinProbability, Converter={StaticResource ProbabilityConverter}}"
-                   Foreground="{Binding WinProbabilityColor}"
-                   IsVisible="{Binding IsStatisticsLoaded, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-
-		<Grid Grid.Row="2" ColumnDefinitions="*,*" RowDefinitions="*"
+		<Grid Grid.Row="1" Grid.ColumnSpan="2"
               IsVisible="{Binding IsStatisticsLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
-			<ItemsControl Grid.Column="0" ItemsSource="{Binding AllyTeam}">
+			<Grid ColumnDefinitions="*,*" HorizontalAlignment="Stretch">
+				<Border Grid.Column="0" Background="{StaticResource AllyColor}" CornerRadius="5" Padding="10" Margin="5">
+					<StackPanel>
+						<TextBlock Text="{x:Static properties:Resources.Win}" FontSize="18" HorizontalAlignment="Center" Foreground="DarkBlue"/>
+						<TextBlock Text="{Binding WinProbability, Converter={StaticResource ProbabilityConverter}}" FontSize="28" HorizontalAlignment="Center" Foreground="DarkBlue"/>
+						<TextBlock Text="{Binding AllyTeamEfficiency}" FontSize="16" HorizontalAlignment="Center" Foreground="DarkBlue"/>
+					</StackPanel>
+				</Border>
+
+				<Border Grid.Column="1" Background="{StaticResource EnemyColor}" CornerRadius="5" Padding="10" Margin="5">
+					<StackPanel>
+						<TextBlock Text="{x:Static properties:Resources.Lose}" FontSize="18" HorizontalAlignment="Center" Foreground="DarkRed"/>
+						<TextBlock Text="{Binding LoseProbability, Converter={StaticResource ProbabilityConverter}}" FontSize="28" HorizontalAlignment="Center" Foreground="DarkRed"/>
+						<TextBlock Text="{Binding EnemyTeamEfficiency}" FontSize="16" HorizontalAlignment="Center" Foreground="DarkRed"/>
+					</StackPanel>
+				</Border>
+			</Grid>
+		</Grid>
+		<Grid Grid.Row="2" ColumnDefinitions="*,*" RowDefinitions="*">
+			<ItemsControl ItemsSource="{Binding AllyTeam}" Grid.Column="0">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate x:DataType="vm:PlayerViewModel">
-						<StackPanel Orientation="Horizontal">
-							<Image Source="{Binding ChampionIcon}" Width="32" Height="32"/>
-							<TextBlock Text="{Binding Nickname}" Margin="5,0"/>
-							<TextBlock Text="{Binding Efficiency}" Margin="5,0"/>
-						</StackPanel>
+						<Border Margin="5" Padding="5" Background="{StaticResource AllyColor}" CornerRadius="5">
+							<StackPanel Orientation="Horizontal">
+								<Image Source="{Binding ChampionIcon}" Width="32" Height="32"/>
+								<StackPanel>
+									<TextBlock Text="{Binding Nickname}" Margin="5,0" FontSize="16"/>
+									<TextBlock Text="{Binding ChampionName}" Margin="5,0" FontSize="12"/>
+								</StackPanel>
+								<TextBlock Text="{Binding Efficiency}" Margin="5,0" FontSize="14"/>
+							</StackPanel>
+						</Border>
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
-			<ItemsControl Grid.Column="1" ItemsSource="{Binding EnemyTeam}">
+			<ItemsControl ItemsSource="{Binding EnemyTeam}" Grid.Column="1">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate x:DataType="vm:PlayerViewModel">
-						<StackPanel Orientation="Horizontal">
-							<Image Source="{Binding ChampionIcon}" Width="32" Height="32"/>
-							<TextBlock Text="{Binding Nickname}" Margin="5,0"/>
-							<TextBlock Text="{Binding Efficiency}" Margin="5,0"/>
-						</StackPanel>
+						<Border Margin="5" Padding="5" Background="{StaticResource EnemyColor}" CornerRadius="5">
+							<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+								<TextBlock Text="{Binding Efficiency}" Margin="5,0" FontSize="14"/>
+								<StackPanel>
+									<TextBlock Text="{Binding Nickname}" Margin="5,0" FontSize="16"/>
+									<TextBlock Text="{Binding ChampionName}" Margin="5,0" FontSize="12"/>
+								</StackPanel>
+								<Image Source="{Binding ChampionIcon}" Width="32" Height="32"/>
+							</StackPanel>
+						</Border>
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
 		</Grid>
 
 		<Grid Grid.Row="3" ColumnDefinitions="*,*"
-              IsVisible="{Binding IsStatisticsLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
-			<Image Source="{Binding AllyTeamIcon}" Width="64" Height="64" Margin="10"/>
-			<Image Source="{Binding EnemyTeamIcon}" Width="64" Height="64" Margin="10"/>
+                IsVisible="{Binding IsStatisticsLoaded, Converter={StaticResource BooleanToVisibilityConverter}}">
+			<Image Source="{Binding AllyTeamIcon}" Width="64" Height="64" Margin="10" HorizontalAlignment="Left"/>
+			<Image Source="{Binding EnemyTeamIcon}" Width="64" Height="64" Margin="10" HorizontalAlignment="Right"/>
 		</Grid>
 	</Grid>
 </UserControl>

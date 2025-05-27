@@ -12,6 +12,13 @@ public class PlayerViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref nickname, value);
     }
 
+    private string championName;
+    public string ChampionName
+    {
+        get => championName;
+        set => this.RaiseAndSetIfChanged(ref championName, value);
+    }
+
     private Bitmap championIcon;
     public Bitmap ChampionIcon
     {

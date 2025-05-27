@@ -8,6 +8,7 @@ using Splat.Serilog;
 using Splat.Autofac;
 using Autofac;
 using Avalonia.ReactiveUI;
+using LoLTracker.Models;
 
 namespace LoLTracker.Services
 {
@@ -65,8 +66,10 @@ namespace LoLTracker.Services
         public static void RegisterStatsServices(ContainerBuilder builder)
         {
             builder.RegisterType<RiotApi>().AsSelf().SingleInstance();
-            builder.RegisterType<LoLRepository>().AsSelf().SingleInstance();
+            builder.RegisterType<CacheService>().AsSelf().SingleInstance();
             builder.RegisterType<StatisticsService>().AsSelf().SingleInstance();
+            builder.RegisterType<LeagueContext>().AsSelf().SingleInstance();
+            builder.RegisterType<CacheService>().AsSelf().SingleInstance();
         }
     }
 }

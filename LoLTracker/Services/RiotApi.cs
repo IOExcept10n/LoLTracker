@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Diagnostics;
-using LoLTracker.Models;
 using LoLTracker.Models.Dto;
 using LoLTracker.Utilities;
 using Microsoft.Extensions.Configuration;

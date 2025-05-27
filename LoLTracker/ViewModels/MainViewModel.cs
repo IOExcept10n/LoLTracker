@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -8,18 +9,24 @@ using System.Windows.Input;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
+using CommunityToolkit.Diagnostics;
 using LoLTracker.Properties;
+using LoLTracker.Services;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia;
 using ReactiveUI;
+using Splat;
 
 namespace LoLTracker.ViewModels;
 
-public partial class MainViewModel : ReactiveObject
+public partial class MainViewModel : ViewModelBase
 {
     // HACK:
     private static readonly Bitmap AllyIcon = Bitmap.DecodeToWidth(AssetLoader.OpenAndGetAssembly(new Uri("avares://LoLTracker/Assets/ally.jpg")).stream, 512);
     private static readonly Bitmap EnemyIcon = Bitmap.DecodeToWidth(AssetLoader.OpenAndGetAssembly(new Uri("avares://LoLTracker/Assets/enemy.jpg")).stream, 512);
 
-    private string riotId;
+    private string riotId = string.Empty;
+    private readonly StatisticsService stats;
 
     [RegularExpression(@"^.*#[a-zA-Z0-9]{2,5}$", ErrorMessageResourceName = nameof(Resources.UseCorrectRiotId), ErrorMessageResourceType = typeof(Resources))]
     public string RiotId
@@ -35,24 +42,38 @@ public partial class MainViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref winProbability, value);
     }
 
-    private readonly ObservableAsPropertyHelper<string> winProbabilityColor;
-    public string WinProbabilityColor => winProbabilityColor.Value;
+    private readonly ObservableAsPropertyHelper<double> loseProbability;
+    public double LoseProbability => loseProbability.Value;
 
     public ObservableCollection<PlayerViewModel> AllyTeam { get; set; }
     public ObservableCollection<PlayerViewModel> EnemyTeam { get; set; }
+
+    private double allyTeamEfficiency;
+    public double AllyTeamEfficiency
+    {
+        get => allyTeamEfficiency;
+        set => this.RaiseAndSetIfChanged(ref allyTeamEfficiency, value);
+    }
+
+    private double enemyTeamEfficiency;
+    public double EnemyTeamEfficiency
+    {
+        get => enemyTeamEfficiency;
+        set => this.RaiseAndSetIfChanged(ref enemyTeamEfficiency, value);
+    }
 
     private string allyTeamIcon;
     public string AllyTeamIcon
     {
         get => allyTeamIcon;
-        set => this.RaiseAndSetIfChanged(ref allyTeamIcon, value);
+        [MemberNotNull(nameof(allyTeamIcon))] set => this.RaiseAndSetIfChanged(ref allyTeamIcon!, value);
     }
 
     private string enemyTeamIcon;
     public string EnemyTeamIcon
     {
         get => enemyTeamIcon;
-        set => this.RaiseAndSetIfChanged(ref enemyTeamIcon, value);
+        [MemberNotNull(nameof(enemyTeamIcon))] set => this.RaiseAndSetIfChanged(ref enemyTeamIcon!, value);
     }
 
     private bool isStatisticsLoaded;
@@ -73,18 +94,13 @@ public partial class MainViewModel : ReactiveObject
 
     public MainViewModel()
     {
-        winProbabilityColor = this.WhenAnyValue(x => x.WinProbability)
-            .Select(x => x switch
-            {
-                < 0.3 => "Red",
-                < 0.5 => "Orange",
-                < 0.7 => "Yellow",
-                _ => "Green"
-            })
-            .ToProperty(this, x => x.WinProbabilityColor);
+        stats = Locator.Current.GetService<StatisticsService>() ?? ThrowHelper.ThrowInvalidOperationException<StatisticsService>();
+        loseProbability = this.WhenAnyValue(x => x.WinProbability)
+                              .Select(x => 1 - x)
+                              .ToProperty(this, x => x.LoseProbability);
 
-        AllyTeam = new ObservableCollection<PlayerViewModel>();
-        EnemyTeam = new ObservableCollection<PlayerViewModel>();
+        AllyTeam = [];
+        EnemyTeam = [];
 
         var canExecute = this.WhenAnyValue(
             x => x.RiotId, x => x.IsLoading,
@@ -93,6 +109,8 @@ public partial class MainViewModel : ReactiveObject
         UpdateCommand = ReactiveCommand.CreateFromTask(UpdateDataAsync, canExecute);
         IsStatisticsLoaded = false;
         IsLoading = false;
+        AllyTeamIcon = "avares://LoLTracker/Assets/ally_team_icon.png";
+        EnemyTeamIcon = "avares://LoLTracker/Assets/enemy_team_icon.png";
     }
 
     private bool IsRiotIdValid(string riotId)
@@ -114,35 +132,50 @@ public partial class MainViewModel : ReactiveObject
             // Sample logic for the data update
             try
             {
-                await Task.Delay(1000);
+                var result = await stats.CalculateStats(RiotId);
+                //await Task.Delay(1000);
+                WinProbability = result.WinProbability;
 
-                WinProbability = GetWinProbability(RiotId);
-                AllyTeamIcon = "avares://LoLTracker/Assets/ally_team_icon.png";
-                EnemyTeamIcon = "avares://LoLTracker/Assets/enemy_team_icon.png";
+                AllyTeamEfficiency = result.AllyTeam.TotalEfficiency;
+                EnemyTeamEfficiency = result.EnemyTeam.TotalEfficiency;
 
                 AllyTeam.Clear();
-                EnemyTeam.Clear();
-                for (int i = 0; i < 5; i++)
+                foreach (var player in result.AllyTeam.Players)
                 {
-                    AllyTeam.Add(new PlayerViewModel { Nickname = $"Ally{i+1}", ChampionIcon = AllyIcon, Efficiency = $"{Random.Shared.NextDouble(),1:F2}" });
+                    var vm = new PlayerViewModel
+                    {
+                        Nickname = player.PlayerName,
+                        ChampionName = player.ChampionName,
+                        ChampionIcon = AllyIcon,
+                        Efficiency = $"{player.Efficiency,1:F2}"
+                    };
+                    AllyTeam.Add(vm);
                 }
-                for (int i = 0; i < 5; i++)
+                EnemyTeam.Clear();
+                foreach (var player in result.EnemyTeam.Players)
                 {
-                    EnemyTeam.Add(new PlayerViewModel { Nickname = $"Enemy{i+1}", ChampionIcon = EnemyIcon, Efficiency = $"{Random.Shared.NextDouble(),1:F2}" });
+                    var vm = new PlayerViewModel
+                    {
+                        Nickname = player.PlayerName,
+                        ChampionName = player.ChampionName,
+                        ChampionIcon = EnemyIcon,
+                        Efficiency = $"{player.Efficiency,1:F2}"
+                    };
+                    EnemyTeam.Add(vm);
                 }
 
                 IsStatisticsLoaded = true;
+            }
+            catch (Exception ex)
+            {
+                var box = MessageBoxManager.GetMessageBoxStandard(Resources.Error, Resources.ExceptionDetails + ex.Message, ButtonEnum.Ok);
+                await box.ShowAsync();
             }
             finally
             {
                 IsLoading = false;
             }
         });
-    }
-
-    private double GetWinProbability(string riotId)
-    {
-        return 0.75;
     }
 
     [GeneratedRegex(@"^.*#[a-zA-Z0-9]{2,5}$")]

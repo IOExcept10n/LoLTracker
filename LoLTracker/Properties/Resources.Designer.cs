@@ -80,6 +80,24 @@ namespace LoLTracker.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Error.
+        /// </summary>
+        public static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Cannot calculate probability: .
+        /// </summary>
+        public static string ExceptionDetails {
+            get {
+                return ResourceManager.GetString("ExceptionDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Input your Riot ID (ex. MyNickname#1234).
         /// </summary>
         public static string InputRiotId {
@@ -89,11 +107,29 @@ namespace LoLTracker.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Lose.
+        /// </summary>
+        public static string Lose {
+            get {
+                return ResourceManager.GetString("Lose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Please input correct Riot ID.
         /// </summary>
         public static string UseCorrectRiotId {
             get {
                 return ResourceManager.GetString("UseCorrectRiotId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Win.
+        /// </summary>
+        public static string Win {
+            get {
+                return ResourceManager.GetString("Win", resourceCulture);
             }
         }
     }
