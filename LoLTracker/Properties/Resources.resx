@@ -137,10 +137,35 @@
   <data name="Lose" xml:space="preserve">
     <value>Lose</value>
   </data>
+  <data name="TopLaneCalculator" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>ML\xgb_eff_TOP.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <comment>XGBoost config for top lane</comment>
+  </data>
+  <data name="MidLaneCalculator" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>ML\xgb_eff_MIDDLE.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="JungleLaneCalculator" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>ML\xgb_eff_JUNGLE.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="BottomLaneCalculator" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>ML\xgb_eff_BOTTOM.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="SupportLaneCalculator" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>ML\xgb_eff_UTILITY.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="UseCorrectRiotId" xml:space="preserve">
     <value>Please input correct Riot ID</value>
   </data>
   <data name="Win" xml:space="preserve">
     <value>Win</value>
+  </data>
+  <data name="LogReg" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>ML\logreg_winprob.onnx;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="BlueTeam" xml:space="preserve">
+    <value>Blue team</value>
+  </data>
+  <data name="RedTeam" xml:space="preserve">
+    <value>Red team</value>
   </data>
 </root>

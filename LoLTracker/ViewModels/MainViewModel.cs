@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
 using Avalonia.Threading;
 using CommunityToolkit.Diagnostics;
 using LoLTracker.Properties;
 using LoLTracker.Services;
-using MsBox.Avalonia.Enums;
-using MsBox.Avalonia;
 using ReactiveUI;
 using Splat;
 
@@ -21,12 +16,9 @@ namespace LoLTracker.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-    // HACK:
-    private static readonly Bitmap AllyIcon = Bitmap.DecodeToWidth(AssetLoader.OpenAndGetAssembly(new Uri("avares://LoLTracker/Assets/ally.jpg")).stream, 512);
-    private static readonly Bitmap EnemyIcon = Bitmap.DecodeToWidth(AssetLoader.OpenAndGetAssembly(new Uri("avares://LoLTracker/Assets/enemy.jpg")).stream, 512);
-
     private string riotId = string.Empty;
     private readonly StatisticsService stats;
+    private readonly IconsService icons;
 
     [RegularExpression(@"^.*#[a-zA-Z0-9]{2,5}$", ErrorMessageResourceName = nameof(Resources.UseCorrectRiotId), ErrorMessageResourceType = typeof(Resources))]
     public string RiotId
@@ -62,20 +54,6 @@ public partial class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref enemyTeamEfficiency, value);
     }
 
-    private string allyTeamIcon;
-    public string AllyTeamIcon
-    {
-        get => allyTeamIcon;
-        [MemberNotNull(nameof(allyTeamIcon))] set => this.RaiseAndSetIfChanged(ref allyTeamIcon!, value);
-    }
-
-    private string enemyTeamIcon;
-    public string EnemyTeamIcon
-    {
-        get => enemyTeamIcon;
-        [MemberNotNull(nameof(enemyTeamIcon))] set => this.RaiseAndSetIfChanged(ref enemyTeamIcon!, value);
-    }
-
     private bool isStatisticsLoaded;
     public bool IsStatisticsLoaded
     {
@@ -95,6 +73,7 @@ public partial class MainViewModel : ViewModelBase
     public MainViewModel()
     {
         stats = Locator.Current.GetService<StatisticsService>() ?? ThrowHelper.ThrowInvalidOperationException<StatisticsService>();
+        icons = Locator.Current.GetService<IconsService>() ?? ThrowHelper.ThrowInvalidOperationException<IconsService>();
         loseProbability = this.WhenAnyValue(x => x.WinProbability)
                               .Select(x => 1 - x)
                               .ToProperty(this, x => x.LoseProbability);
@@ -109,8 +88,6 @@ public partial class MainViewModel : ViewModelBase
         UpdateCommand = ReactiveCommand.CreateFromTask(UpdateDataAsync, canExecute);
         IsStatisticsLoaded = false;
         IsLoading = false;
-        AllyTeamIcon = "avares://LoLTracker/Assets/ally_team_icon.png";
-        EnemyTeamIcon = "avares://LoLTracker/Assets/enemy_team_icon.png";
     }
 
     private bool IsRiotIdValid(string riotId)
@@ -146,7 +123,7 @@ public partial class MainViewModel : ViewModelBase
                     {
                         Nickname = player.PlayerName,
                         ChampionName = player.ChampionName,
-                        ChampionIcon = AllyIcon,
+                        ChampionIcon = await icons.GetAllyIconAsync(player),
                         Efficiency = $"{player.Efficiency,1:F2}"
                     };
                     AllyTeam.Add(vm);
@@ -158,7 +135,7 @@ public partial class MainViewModel : ViewModelBase
                     {
                         Nickname = player.PlayerName,
                         ChampionName = player.ChampionName,
-                        ChampionIcon = EnemyIcon,
+                        ChampionIcon = await icons.GetEnemyIconAsync(player),
                         Efficiency = $"{player.Efficiency,1:F2}"
                     };
                     EnemyTeam.Add(vm);
@@ -168,8 +145,12 @@ public partial class MainViewModel : ViewModelBase
             }
             catch (Exception ex)
             {
-                var box = MessageBoxManager.GetMessageBoxStandard(Resources.Error, Resources.ExceptionDetails + ex.Message, ButtonEnum.Ok);
+#if DEBUG
+                throw new InvalidOperationException("Couldn't process a request.", ex);
+#else
+                var box = MsBox.Avalonia.MessageBoxManager.GetMessageBoxStandard(Resources.Error, Resources.ExceptionDetails + ex.Message, MsBox.Avalonia.Enums.ButtonEnum.Ok);
                 await box.ShowAsync();
+#endif
             }
             finally
             {

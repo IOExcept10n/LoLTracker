@@ -70,6 +70,7 @@ namespace LoLTracker.Services
             builder.RegisterType<StatisticsService>().AsSelf().SingleInstance();
             builder.RegisterType<LeagueContext>().AsSelf().SingleInstance();
             builder.RegisterType<CacheService>().AsSelf().SingleInstance();
+            builder.RegisterType<IconsService>().AsSelf().SingleInstance();
         }
     }
 }

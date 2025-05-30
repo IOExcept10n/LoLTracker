@@ -10,7 +10,7 @@ namespace LoLTracker.ViewModels
         {
             if (value is double probability)
             {
-                return $"{probability * 100:0.00}%";
+                return $"{probability * 100:F2}%";
             }
             return "-.--%";
         }

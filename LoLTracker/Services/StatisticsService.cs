@@ -20,6 +20,7 @@ namespace LoLTracker.Services
             var enemyTeam = new TeamStats();
 
             Dictionary<string, PlayerStats> statsByPlayers = [];
+            HashSet<string> processedMatches = [];
 
             foreach (var participant in lastMatch.Participants)
             {
@@ -29,10 +30,11 @@ namespace LoLTracker.Services
                     TeamDto.MatchTeam.Red => enemyTeam,
                     _ => ThrowHelper.ThrowInvalidOperationException<TeamStats>()
                 };
-                participantTeam.Players.Add(statsByPlayers[participant.Puuid] = new() 
+                participantTeam.Players.Add(statsByPlayers[participant.Puuid] = new()
                 {
                     PlayerName = $"{participant.RiotIdGameName}#{participant.RiotIdTagLine}",
                     ChampionName = participant.ChampionName,
+                    ChampionId = participant.ChampionId,
                 });
                 if (!matchHistoryIndices.ContainsKey(participant.Puuid))
                 {
@@ -44,24 +46,40 @@ namespace LoLTracker.Services
             {
                 foreach (var participant in lastMatch.Participants)
                 {
-                    var trackedMatch = await cache.GetMatchInfoAsync(matchHistoryIndices[participant.Puuid][i]);
+                    var indices = matchHistoryIndices[participant.Puuid];
+                    if (indices.Length <= i) continue;
+                    var trackedMatchId = indices[i];
+                    if (processedMatches.Contains(trackedMatchId)) continue;
+
+                    var trackedMatch = await cache.GetMatchInfoAsync(trackedMatchId);
+                    processedMatches.Add(trackedMatchId);
+
                     foreach (var champion in trackedMatch.Participants)
                     {
-                        var efficiency = EfficiencyCalculator.CalculateEfficiency(participant, trackedMatch);
                         if (statsByPlayers.TryGetValue(champion.Puuid, out var stats))
                         {
+                            var efficiency = EfficiencyCalculator.CalculateEfficiency(champion, trackedMatch);
                             stats.Efficiency += efficiency;
+                            stats.MatchCount++;
                         }
                     }
                 }
             }
 
-            allyTeam.TotalEfficiency = allyTeam.Players.Average(x => x.Efficiency);
-            enemyTeam.TotalEfficiency = enemyTeam.Players.Average(x => x.Efficiency);
+            foreach (var playerStats in statsByPlayers.Values)
+            {
+                if (playerStats.MatchCount > 0)
+                {
+                    playerStats.Efficiency /= playerStats.MatchCount;
+                }
+            }
+
+            allyTeam.TotalEfficiency = allyTeam.Players.Sum(x => x.Efficiency);
+            enemyTeam.TotalEfficiency = enemyTeam.Players.Sum(x => x.Efficiency);
 
             return new(allyTeam, enemyTeam)
             {
-                WinProbability = EfficiencyCalculator.CalculateWinProbability(allyTeam.TotalEfficiency, enemyTeam.TotalEfficiency)
+                WinProbability = EfficiencyCalculator.CalculateWinProbability(allyTeam, enemyTeam)
             };
         }
     }

@@ -6,6 +6,7 @@ using CommunityToolkit.Diagnostics;
 using LoLTracker.Models.Dto;
 using LoLTracker.Utilities;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using Splat;
 
 namespace LoLTracker.Services
@@ -19,6 +20,8 @@ namespace LoLTracker.Services
             Environment.GetEnvironmentVariable("ApiKey") ??
             configuration["ApiKey"] ??
             ThrowHelper.ThrowInvalidOperationException<string?>("Couldn't find an API key for the application.");
+
+        private Dictionary<string, string> championIcons = null;
 
         /// <summary>
         /// Gets the encrypted <see langword="Riot PUUID"/> from the Riot ID.
@@ -103,6 +106,28 @@ namespace LoLTracker.Services
             return [.. from x in response select x.ToString()];
         }
 
+        private async Task<Dictionary<string, string>> GetChampionsDataAsync(string gameVersion)
+        {
+            dynamic response = await worker.BuildRequest(Endpoints.DataDragon.Api)
+                               .WithEndpoint(Endpoints.DataDragon.Resources)
+                               .WithEndpoint($"{gameVersion}/")
+                               .WithEndpoint(Endpoints.DataDragon.ChampionsEndpoint)
+                               .CallAsync();
+            Dictionary<string, string> result = [];
+            foreach (dynamic champion in response.data)
+            {
+                result.Add(champion.key, $"{Endpoints.DataDragon.ApiUrl}{Endpoints.DataDragon.Resources}{gameVersion}/{Endpoints.DataDragon.IconsEndpoint}{champion.image.full}");
+            }
+            return result;
+        }
+
+        public async Task<string?> GetChampionIconLinkAsync(int championId, string gameVersion)
+        {
+            championIcons ??= await GetChampionsDataAsync(gameVersion);
+            championIcons.TryGetValue(championId.ToString(), out var result);
+            return result;
+        }
+
         private static class Endpoints
         {
             public const string ApiUrl = "api.riotgames.com/";
@@ -114,8 +139,18 @@ namespace LoLTracker.Services
             public const string MatchesByPlayer = "lol/match/v5/matches/by-puuid/";
             public const string MatchById = "lol/match/v5/matches/";
 
-            public static Uri RuAddress = new($"https://{RuServer}.{ApiUrl}");
-            public static Uri EuAddress = new($"https://{EuServer}.{ApiUrl}");
+            public static class DataDragon 
+            {
+                public const string ApiUrl = "https://ddragon.leagueoflegends.com/";
+                public const string Resources = "cdn/";
+                public const string ChampionsEndpoint = "data/en_US/champion.json";
+                public const string IconsEndpoint = "img/champion/";
+
+                public static Uri Api = new(ApiUrl);
+            }
+
+            public static readonly Uri RuAddress = new($"https://{RuServer}.{ApiUrl}");
+            public static readonly Uri EuAddress = new($"https://{EuServer}.{ApiUrl}");
         }
     }
 }

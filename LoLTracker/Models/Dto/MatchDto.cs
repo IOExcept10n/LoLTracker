@@ -20,6 +20,7 @@ namespace LoLTracker.Models.Dto
         public DateTime GameEndTimestamp { get; set; }
         public List<TeamDto> Teams { get; set; } = [];
         public List<ParticipantDto> Participants { get; set; } = [];
+        public string GameVersion { get; set; } = string.Empty;
         private class MillisecondEpochConverter : DateTimeConverterBase
         {
             public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)

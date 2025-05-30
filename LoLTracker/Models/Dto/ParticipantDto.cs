@@ -25,7 +25,7 @@ namespace LoLTracker.Models.Dto
         public long MatchId { get; set; }
         [JsonIgnore]
         public MatchDto Match { get; set; }
-
+        public int ChampionId { get; set; }
         public string ChampionName { get; set; }
         public string Puuid { get; set; }
         public int Kills { get; set; }
@@ -36,12 +36,24 @@ namespace LoLTracker.Models.Dto
         public int DamageDealtToChampions { get; set; }
         public string Role { get; set; }
         public int Level { get; set; }
+        public int TimePlayed { get; set; }
         public int DetectorWardsPlaced { get; set; } = 0;
         public int StealthWardsPlaced { get; set; } = 0;
         public int TotalWardsPlaced { get; set; } = 0;
         public int MagicDamageDealt { get; set; } = 0;
         public int PhysicalDamageDealt { get; set; } = 0;
         public int TotalDamageDealt { get; set; } = 0;
+        public int ChampExperience { get; set; } = 0;
+        public int TotalDamageDealtToChampions { get; set; } = 0;
+        public int VisionScore { get; set; } = 0;
+        public int TotalMinionsKilled { get; set; } = 0;
+        public int DamageSelfMitigated { get; set; } = 0;
+        public int TotalHeal { get; set; } = 0;
+        public int TurretTakedowns { get; set; } = 0;
+        public int DragonKills { get; set; } = 0;
+        public int BaronKills { get; set; } = 0;
+        public int WardsPlaced { get; set; } = 0;
+        public int WardsKilled { get; set; } = 0;
         public string RiotIdGameName { get; set; } = string.Empty;
         public string RiotIdTagLine { get; set; } = string.Empty;
         [JsonConverter(typeof(MyEnumConverter))]
