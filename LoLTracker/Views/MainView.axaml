@@ -7,8 +7,6 @@
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
              x:Class="LoLTracker.Views.MainView"
              x:DataType="vm:MainViewModel"
-             BorderThickness="4"
-             BorderBrush="Black"
              Background="{StaticResource MainBackground}">
 	<UserControl.Resources>
 		<SolidColorBrush x:Key="EnemyColor" Color="#80F08080"/>
@@ -22,6 +20,7 @@
 			<TextBox Name="RiotIdInput"
                      Watermark="{x:Static properties:Resources.InputRiotId}"
                      Margin="2"
+					 KeyDown="OnRiotInputKeyDown"
                      Text="{Binding RiotId, UpdateSourceTrigger=PropertyChanged}"/>
 			<Button Name="AcceptIdButton"
                     Grid.Column="1"

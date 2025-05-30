@@ -13,6 +13,7 @@ namespace LoLTracker.Services
     internal class RiotApi(IConfiguration configuration) : IEnableLogger
     {
         private const string ApiKey = "api_key";
+        private const string DefaultVersion = "15.11.1";
 
         private readonly string key =
             Environment.GetEnvironmentVariable("ApiKey") ??
@@ -112,6 +113,12 @@ namespace LoLTracker.Services
             return response["info"]!.ToObject<MatchDto>()!;
         }
 
+        public async Task<string?> FetchVersionAsync()
+        {
+            var response = await worker.ApiCall(Endpoints.DataDragon.Api, Endpoints.DataDragon.VersionsEndpoint);
+            return response?[0]?.ToString() ?? DefaultVersion;
+        }
+
         private async Task<Dictionary<string, string>> GetChampionsDataAsync(string gameVersion)
         {
             dynamic response = await worker.BuildRequest(Endpoints.DataDragon.Api)
@@ -122,7 +129,7 @@ namespace LoLTracker.Services
             Dictionary<string, string> result = [];
             foreach (dynamic champion in response.data)
             {
-                result.Add(champion.key, $"{Endpoints.DataDragon.ApiUrl}{Endpoints.DataDragon.Resources}{gameVersion}/{Endpoints.DataDragon.IconsEndpoint}{champion.image.full}");
+                result.Add(champion.Value.key.ToString(), $"{Endpoints.DataDragon.ApiUrl}{Endpoints.DataDragon.Resources}{gameVersion}/{Endpoints.DataDragon.IconsEndpoint}{champion.Value.image.full}");
             }
             return result;
         }
@@ -147,6 +154,7 @@ namespace LoLTracker.Services
                 public const string ChampionsEndpoint = "data/en_US/champion.json";
                 public const string IconsEndpoint = "img/champion/";
                 public const string Resources = "cdn/";
+                public const string VersionsEndpoint = "api/versions.json";
                 public static Uri Api = new(ApiUrl);
             }
         }

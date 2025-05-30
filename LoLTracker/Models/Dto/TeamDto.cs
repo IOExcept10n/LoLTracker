@@ -32,7 +32,7 @@ namespace LoLTracker.Models.Dto
         public Guid Id { get; set; }
 
         [JsonIgnore]
-        public MatchDto Match { get; set; }
+        public MatchDto? Match { get; set; }
 
         [JsonIgnore]
         public long MatchId { get; set; }

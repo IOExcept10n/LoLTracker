@@ -16,6 +16,7 @@ namespace LoLTracker.Services
     {
         public static void RegisterServices()
         {
+            System.Globalization.CultureInfo.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
             var builder = new ContainerBuilder();
 
             RegisterStatsServices(builder);

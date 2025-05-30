@@ -111,6 +111,7 @@ public partial class MainViewModel : ViewModelBase
             // Sample logic for the data update
             try
             {
+                await icons.FetchVersionAsync();
                 var result = await stats.CalculateStats(RiotId);
                 //await Task.Delay(1000);
                 WinProbability = result.WinProbability;

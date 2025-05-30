@@ -34,9 +34,6 @@ namespace LoLTracker.Services
             return await loader.ProvideImageAsync(iconUrl) ?? EnemyIcon;
         }
 
-        public void InitializeVersion(string version)
-        {
-            this.version = version;
-        }
+        public async Task FetchVersionAsync() => version ??= await api.FetchVersionAsync();
     }
 }
