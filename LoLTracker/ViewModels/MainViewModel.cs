@@ -16,59 +16,15 @@ namespace LoLTracker.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-    private string riotId = string.Empty;
-    private readonly StatisticsService stats;
     private readonly IconsService icons;
-
-    [RegularExpression(@"^.*#[a-zA-Z0-9]{2,5}$", ErrorMessageResourceName = nameof(Resources.UseCorrectRiotId), ErrorMessageResourceType = typeof(Resources))]
-    public string RiotId
-    {
-        get => riotId;
-        set => this.RaiseAndSetIfChanged(ref riotId, value);
-    }
-
-    private double winProbability;
-    public double WinProbability
-    {
-        get => winProbability;
-        set => this.RaiseAndSetIfChanged(ref winProbability, value);
-    }
-
     private readonly ObservableAsPropertyHelper<double> loseProbability;
-    public double LoseProbability => loseProbability.Value;
-
-    public ObservableCollection<PlayerViewModel> AllyTeam { get; set; }
-    public ObservableCollection<PlayerViewModel> EnemyTeam { get; set; }
-
+    private readonly StatisticsService stats;
     private double allyTeamEfficiency;
-    public double AllyTeamEfficiency
-    {
-        get => allyTeamEfficiency;
-        set => this.RaiseAndSetIfChanged(ref allyTeamEfficiency, value);
-    }
-
     private double enemyTeamEfficiency;
-    public double EnemyTeamEfficiency
-    {
-        get => enemyTeamEfficiency;
-        set => this.RaiseAndSetIfChanged(ref enemyTeamEfficiency, value);
-    }
-
-    private bool isStatisticsLoaded;
-    public bool IsStatisticsLoaded
-    {
-        get => isStatisticsLoaded;
-        set => this.RaiseAndSetIfChanged(ref isStatisticsLoaded, value);
-    }
-
     private bool isLoading;
-    public bool IsLoading
-    {
-        get => isLoading;
-        set => this.RaiseAndSetIfChanged(ref isLoading, value);
-    }
-
-    public ICommand UpdateCommand { get; }
+    private bool isStatisticsLoaded;
+    private string riotId = string.Empty;
+    private double winProbability;
 
     public MainViewModel()
     {
@@ -90,13 +46,59 @@ public partial class MainViewModel : ViewModelBase
         IsLoading = false;
     }
 
-    private bool IsRiotIdValid(string riotId)
+    public ObservableCollection<PlayerViewModel> AllyTeam { get; set; }
+
+    public double AllyTeamEfficiency
     {
-        // Проверка на null или пустую строку
+        get => allyTeamEfficiency;
+        set => this.RaiseAndSetIfChanged(ref allyTeamEfficiency, value);
+    }
+
+    public ObservableCollection<PlayerViewModel> EnemyTeam { get; set; }
+
+    public double EnemyTeamEfficiency
+    {
+        get => enemyTeamEfficiency;
+        set => this.RaiseAndSetIfChanged(ref enemyTeamEfficiency, value);
+    }
+
+    public bool IsLoading
+    {
+        get => isLoading;
+        set => this.RaiseAndSetIfChanged(ref isLoading, value);
+    }
+
+    public bool IsStatisticsLoaded
+    {
+        get => isStatisticsLoaded;
+        set => this.RaiseAndSetIfChanged(ref isStatisticsLoaded, value);
+    }
+
+    public double LoseProbability => loseProbability.Value;
+
+    [RegularExpression(@"^.*#[a-zA-Z0-9]{2,5}$", ErrorMessageResourceName = nameof(Resources.UseCorrectRiotId), ErrorMessageResourceType = typeof(Resources))]
+    public string RiotId
+    {
+        get => riotId;
+        set => this.RaiseAndSetIfChanged(ref riotId, value);
+    }
+
+    public ICommand UpdateCommand { get; }
+
+    public double WinProbability
+    {
+        get => winProbability;
+        set => this.RaiseAndSetIfChanged(ref winProbability, value);
+    }
+
+    [GeneratedRegex(@"^.*#[a-zA-Z0-9]{2,5}$")]
+    private static partial Regex RiotIdValidationRegex();
+
+    private static bool IsRiotIdValid(string riotId)
+    {
         if (string.IsNullOrWhiteSpace(riotId))
             return false;
 
-        // Регулярное выражение для проверки формата
         var regex = RiotIdValidationRegex();
         return regex.IsMatch(riotId);
     }
@@ -158,7 +160,4 @@ public partial class MainViewModel : ViewModelBase
             }
         });
     }
-
-    [GeneratedRegex(@"^.*#[a-zA-Z0-9]{2,5}$")]
-    private static partial Regex RiotIdValidationRegex();
 }

@@ -1,6 +1,6 @@
 ﻿using System;
-using Avalonia.Data.Converters;
 using System.Globalization;
+using Avalonia.Data.Converters;
 
 namespace LoLTracker.ViewModels
 {
@@ -15,10 +15,9 @@ namespace LoLTracker.ViewModels
             return "-.--%";
         }
 
-        public object ConvertBack(object? value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
     }
-
 }

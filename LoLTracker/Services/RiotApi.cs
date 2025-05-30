@@ -6,7 +6,6 @@ using CommunityToolkit.Diagnostics;
 using LoLTracker.Models.Dto;
 using LoLTracker.Utilities;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
 using Splat;
 
 namespace LoLTracker.Services
@@ -15,13 +14,13 @@ namespace LoLTracker.Services
     {
         private const string ApiKey = "api_key";
 
-        private readonly ApiWorker worker = new(new());
         private readonly string key =
             Environment.GetEnvironmentVariable("ApiKey") ??
             configuration["ApiKey"] ??
             ThrowHelper.ThrowInvalidOperationException<string?>("Couldn't find an API key for the application.");
 
-        private Dictionary<string, string> championIcons = null;
+        private readonly ApiWorker worker = new(new());
+        private Dictionary<string, string>? championIcons = null;
 
         /// <summary>
         /// Gets the encrypted <see langword="Riot PUUID"/> from the Riot ID.
@@ -39,6 +38,13 @@ namespace LoLTracker.Services
                                            .WithParams(ApiKey, key)
                                            .CallAsync();
             return response.puuid;
+        }
+
+        public async Task<string?> GetChampionIconLinkAsync(int championId, string gameVersion)
+        {
+            championIcons ??= await GetChampionsDataAsync(gameVersion);
+            championIcons.TryGetValue(championId.ToString(), out var result);
+            return result;
         }
 
         /// <summary>
@@ -73,20 +79,6 @@ namespace LoLTracker.Services
         }
 
         /// <summary>
-        /// Gets the info for a single match by its ID.
-        /// </summary>
-        /// <param name="id">ID of the match to get the info.</param>
-        public async Task<MatchDto> GetMatchInfo(string id)
-        {
-            var response = await worker.BuildRequest(Endpoints.EuAddress)
-                                       .WithEndpoint(Endpoints.MatchById)
-                                       .WithEndpoint(id)
-                                       .WithParams(ApiKey, key)
-                                       .CallAsync();
-            return response["info"]!.ToObject<MatchDto>()!;
-        }
-
-        /// <summary>
         /// Gets the IDs for matches of the specified player.
         /// </summary>
         /// <param name="puuid">Player ID to get matches to.</param>
@@ -106,6 +98,20 @@ namespace LoLTracker.Services
             return [.. from x in response select x.ToString()];
         }
 
+        /// <summary>
+        /// Gets the info for a single match by its ID.
+        /// </summary>
+        /// <param name="id">ID of the match to get the info.</param>
+        public async Task<MatchDto> GetMatchInfo(string id)
+        {
+            var response = await worker.BuildRequest(Endpoints.EuAddress)
+                                       .WithEndpoint(Endpoints.MatchById)
+                                       .WithEndpoint(id)
+                                       .WithParams(ApiKey, key)
+                                       .CallAsync();
+            return response["info"]!.ToObject<MatchDto>()!;
+        }
+
         private async Task<Dictionary<string, string>> GetChampionsDataAsync(string gameVersion)
         {
             dynamic response = await worker.BuildRequest(Endpoints.DataDragon.Api)
@@ -121,36 +127,28 @@ namespace LoLTracker.Services
             return result;
         }
 
-        public async Task<string?> GetChampionIconLinkAsync(int championId, string gameVersion)
-        {
-            championIcons ??= await GetChampionsDataAsync(gameVersion);
-            championIcons.TryGetValue(championId.ToString(), out var result);
-            return result;
-        }
-
         private static class Endpoints
         {
-            public const string ApiUrl = "api.riotgames.com/";
-            public const string RuServer = "ru";
-            public const string EuServer = "europe";
             public const string AccountByPUUID = "lol/summoner/v4/summoners/by-puuid/";
             public const string AccountByRiotID = "riot/account/v1/accounts/by-riot-id/";
+            public const string ApiUrl = "api.riotgames.com/";
             public const string EntriesBySummoner = "lol/league/v4/entries/by-summoner/";
-            public const string MatchesByPlayer = "lol/match/v5/matches/by-puuid/";
+            public const string EuServer = "europe";
             public const string MatchById = "lol/match/v5/matches/";
-
-            public static class DataDragon 
-            {
-                public const string ApiUrl = "https://ddragon.leagueoflegends.com/";
-                public const string Resources = "cdn/";
-                public const string ChampionsEndpoint = "data/en_US/champion.json";
-                public const string IconsEndpoint = "img/champion/";
-
-                public static Uri Api = new(ApiUrl);
-            }
+            public const string MatchesByPlayer = "lol/match/v5/matches/by-puuid/";
+            public const string RuServer = "ru";
+            public static readonly Uri EuAddress = new($"https://{EuServer}.{ApiUrl}");
 
             public static readonly Uri RuAddress = new($"https://{RuServer}.{ApiUrl}");
-            public static readonly Uri EuAddress = new($"https://{EuServer}.{ApiUrl}");
+
+            public static class DataDragon
+            {
+                public const string ApiUrl = "https://ddragon.leagueoflegends.com/";
+                public const string ChampionsEndpoint = "data/en_US/champion.json";
+                public const string IconsEndpoint = "img/champion/";
+                public const string Resources = "cdn/";
+                public static Uri Api = new(ApiUrl);
+            }
         }
     }
 }

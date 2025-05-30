@@ -1,15 +1,20 @@
-﻿using Microsoft.EntityFrameworkCore;
-using LoLTracker.Models.Dto;
+﻿using LoLTracker.Models.Dto;
+using Microsoft.EntityFrameworkCore;
 
 namespace LoLTracker.Models
 {
     public class LeagueContext : DbContext
     {
-        public DbSet<TeamDto> Teams { get; set; }
-        public DbSet<BanDto> Bans { get; set; }
-        public DbSet<ParticipantDto> Participants { get; set; }
-        public DbSet<MatchDto> Matches { get; set; }
         public DbSet<RiotAccountDetails> Accounts { get; set; }
+        public DbSet<BanDto> Bans { get; set; }
+        public DbSet<MatchDto> Matches { get; set; }
+        public DbSet<ParticipantDto> Participants { get; set; }
+        public DbSet<TeamDto> Teams { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlite("Data Source=cache.db");
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -46,11 +51,5 @@ namespace LoLTracker.Models
             modelBuilder.Entity<RiotAccountDetails>()
                 .HasIndex(x => x.RiotId);
         }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlite("Data Source=cache.db");
-        }
     }
-
 }

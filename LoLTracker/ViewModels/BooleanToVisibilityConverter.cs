@@ -1,6 +1,6 @@
-﻿using Avalonia.Data.Converters;
-using System;
+﻿using System;
 using System.Globalization;
+using Avalonia.Data.Converters;
 
 namespace LoLTracker.ViewModels
 {
@@ -10,9 +10,9 @@ namespace LoLTracker.ViewModels
         {
             if (value is bool isVisible)
             {
-                return isVisible; // true -> IsVisible = true
+                return isVisible;
             }
-            return false; // по умолчанию скрыто
+            return false;
         }
 
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -20,5 +20,4 @@ namespace LoLTracker.ViewModels
             throw new NotImplementedException();
         }
     }
-
 }

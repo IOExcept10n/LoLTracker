@@ -1,14 +1,14 @@
 ﻿using System.IO;
 using System.Reflection;
+using Autofac;
+using Avalonia.ReactiveUI;
+using LoLTracker.Models;
 using Microsoft.Extensions.Configuration;
 using ReactiveUI;
 using Serilog;
 using Splat;
-using Splat.Serilog;
 using Splat.Autofac;
-using Autofac;
-using Avalonia.ReactiveUI;
-using LoLTracker.Models;
+using Splat.Serilog;
 
 namespace LoLTracker.Services
 {
@@ -26,7 +26,7 @@ namespace LoLTracker.Services
             AutofacDependencyResolver resolver = new AutofacDependencyResolver(builder);
             Locator.SetLocator(resolver);
 
-            // These .InitializeX() methods will add ReactiveUI platform 
+            // These .InitializeX() methods will add ReactiveUI platform
             // registrations to your container. They MUST be present if
             // you *override* the default Locator.
             Locator.CurrentMutable.InitializeSplat();
@@ -45,6 +45,16 @@ namespace LoLTracker.Services
             resolver.SetLifetimeScope(builder.Build());
         }
 
+        public static void RegisterStatsServices(ContainerBuilder builder)
+        {
+            builder.RegisterType<RiotApi>().AsSelf().SingleInstance();
+            builder.RegisterType<CacheService>().AsSelf().SingleInstance();
+            builder.RegisterType<StatisticsService>().AsSelf().SingleInstance();
+            builder.RegisterType<LeagueContext>().AsSelf().SingleInstance();
+            builder.RegisterType<CacheService>().AsSelf().SingleInstance();
+            builder.RegisterType<IconsService>().AsSelf().SingleInstance();
+        }
+
         private static void RegisterConfiguration()
         {
             var config = new ConfigurationBuilder()
@@ -61,16 +71,6 @@ namespace LoLTracker.Services
                 .WriteTo.File("logs/tracker.log", Serilog.Events.LogEventLevel.Debug, rollingInterval: RollingInterval.Day)
                 .CreateLogger();
             Locator.CurrentMutable.UseSerilogFullLogger(logger);
-        }
-
-        public static void RegisterStatsServices(ContainerBuilder builder)
-        {
-            builder.RegisterType<RiotApi>().AsSelf().SingleInstance();
-            builder.RegisterType<CacheService>().AsSelf().SingleInstance();
-            builder.RegisterType<StatisticsService>().AsSelf().SingleInstance();
-            builder.RegisterType<LeagueContext>().AsSelf().SingleInstance();
-            builder.RegisterType<CacheService>().AsSelf().SingleInstance();
-            builder.RegisterType<IconsService>().AsSelf().SingleInstance();
         }
     }
 }

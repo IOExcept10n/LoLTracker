@@ -73,6 +73,5 @@ namespace LoLTracker.Services
 
             return accountDetails;
         }
-
     }
 }

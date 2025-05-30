@@ -5,31 +5,32 @@ namespace LoLTracker.ViewModels;
 
 public class PlayerViewModel : ViewModelBase
 {
-    private string nickname;
-    public string Nickname
+    private Bitmap? championIcon;
+    private string championName = string.Empty;
+    private string efficiency = string.Empty;
+    private string nickname = string.Empty;
+
+    public Bitmap? ChampionIcon
     {
-        get => nickname;
-        set => this.RaiseAndSetIfChanged(ref nickname, value);
+        get => championIcon;
+        set => this.RaiseAndSetIfChanged(ref championIcon, value);
     }
 
-    private string championName;
     public string ChampionName
     {
         get => championName;
         set => this.RaiseAndSetIfChanged(ref championName, value);
     }
 
-    private Bitmap championIcon;
-    public Bitmap ChampionIcon
-    {
-        get => championIcon;
-        set => this.RaiseAndSetIfChanged(ref championIcon, value);
-    }
-
-    private string efficiency;
     public string Efficiency
     {
         get => efficiency;
         set => this.RaiseAndSetIfChanged(ref efficiency, value);
+    }
+
+    public string Nickname
+    {
+        get => nickname;
+        set => this.RaiseAndSetIfChanged(ref nickname, value);
     }
 }

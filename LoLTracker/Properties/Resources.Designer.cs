@@ -90,7 +90,7 @@ namespace LoLTracker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter your nickname to get relevant info about the match..
+        ///   Looks up a localized string similar to Enter your Riot ID to get relevant info about the match..
         /// </summary>
         public static string EnterNickname {
             get {

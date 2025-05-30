@@ -16,11 +16,6 @@ namespace LoLTracker.Services
 
         private string? version;
 
-        public void InitializeVersion(string version)
-        {
-            this.version = version;
-        }
-
         public async Task<Bitmap> GetAllyIconAsync(PlayerStats stats)
         {
             Guard.IsNotNull(version);
@@ -37,6 +32,11 @@ namespace LoLTracker.Services
             if (iconUrl == null)
                 return EnemyIcon;
             return await loader.ProvideImageAsync(iconUrl) ?? EnemyIcon;
+        }
+
+        public void InitializeVersion(string version)
+        {
+            this.version = version;
         }
     }
 }

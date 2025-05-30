@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,55 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="AppConfig" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\appconfig.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    <comment>Configuration file</comment>
-  </data>
   <data name="EnterNickname" xml:space="preserve">
-    <value>Enter your Riot ID to get relevant info about the match.</value>
+    <value>Введите ваш Riot ID чтобы получить актуальную информацию о матче.</value>
   </data>
   <data name="Error" xml:space="preserve">
-    <value>Error</value>
+    <value>Ошибка</value>
   </data>
   <data name="ExceptionDetails" xml:space="preserve">
-    <value>Cannot calculate probability: </value>
+    <value>Невозможно вычислить вероятность: </value>
   </data>
   <data name="InputRiotId" xml:space="preserve">
-    <value>Input your Riot ID (ex. MyNickname#1234)</value>
+    <value>Введите ваш Riot ID (например, MyNickname#1234)</value>
   </data>
   <data name="Lose" xml:space="preserve">
-    <value>Lose</value>
-  </data>
-  <data name="TopLaneCalculator" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>ML\xgb_eff_TOP.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    <comment>XGBoost config for top lane</comment>
-  </data>
-  <data name="MidLaneCalculator" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>ML\xgb_eff_MIDDLE.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="JungleLaneCalculator" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>ML\xgb_eff_JUNGLE.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="BottomLaneCalculator" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>ML\xgb_eff_BOTTOM.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="SupportLaneCalculator" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>ML\xgb_eff_UTILITY.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Поражение</value>
   </data>
   <data name="UseCorrectRiotId" xml:space="preserve">
-    <value>Please input correct Riot ID</value>
+    <value>Пожалуйста, проверьте правильность Riot ID</value>
   </data>
   <data name="Win" xml:space="preserve">
-    <value>Win</value>
-  </data>
-  <data name="LogReg" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>ML\logreg_winprob.onnx;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Победа</value>
   </data>
   <data name="BlueTeam" xml:space="preserve">
-    <value>Blue team</value>
+    <value>Команда синих</value>
   </data>
   <data name="RedTeam" xml:space="preserve">
-    <value>Red team</value>
+    <value>Команда красных</value>
   </data>
 </root>
