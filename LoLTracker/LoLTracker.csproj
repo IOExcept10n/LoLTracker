@@ -10,10 +10,20 @@
     <Copyright>Copyright © 2025 IOException</Copyright>
     <Authors>IOExcept10n</Authors>
     <Description>An app that predicts League of Legends (LoL) match win probability</Description>
+    <PackageIcon>logo.png</PackageIcon>
+    <ApplicationIcon>Assets\logo.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Remove="Assets\logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\logo.ico" />
   </ItemGroup>
 
   <ItemGroup>

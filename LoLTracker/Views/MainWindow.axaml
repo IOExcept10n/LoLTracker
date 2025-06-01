@@ -6,7 +6,7 @@
         xmlns:views="clr-namespace:LoLTracker.Views"
         mc:Ignorable="d"
         x:Class="LoLTracker.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/logo.ico"
 		Width="600" Height="600"
         Title="LoLTracker">
         <views:MainView />

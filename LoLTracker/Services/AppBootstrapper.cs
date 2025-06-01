@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Autofac;
 using Avalonia.ReactiveUI;
 using LoLTracker.Models;
@@ -67,10 +68,11 @@ namespace LoLTracker.Services
 
         private static void RegisterLogging()
         {
-            var logger = new LoggerConfiguration()
-                .WriteTo.Console(Serilog.Events.LogEventLevel.Verbose)
-                .WriteTo.File("logs/tracker.log", Serilog.Events.LogEventLevel.Debug, rollingInterval: RollingInterval.Day)
-                .CreateLogger();
+            var config = new LoggerConfiguration()
+                .WriteTo.Console(Serilog.Events.LogEventLevel.Verbose);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                config.WriteTo.File("logs/tracker.log", Serilog.Events.LogEventLevel.Debug, rollingInterval: RollingInterval.Day);
+            var logger = config.CreateLogger();
             Locator.CurrentMutable.UseSerilogFullLogger(logger);
         }
     }

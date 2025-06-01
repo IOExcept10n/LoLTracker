@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Diagnostics;
@@ -8,19 +9,19 @@ namespace LoLTracker.Services
 {
     internal class StatisticsService(CacheService cache)
     {
-        public async Task<MatchReport> CalculateStats(string riotId, int iterations = 1)
+        public async Task<MatchReport> CalculateStats(string riotId, int iterations = 2)
         {
             var riotAccount = await cache.GetRiotAccountDetailsAsync(riotId);
-            Dictionary<string, string[]> matchHistoryIndices = [];
-            var currentMatchHistory = matchHistoryIndices[riotAccount.Puuid] = await cache.GetMatchIdsAsync(riotAccount.Puuid, 0, iterations);
+            var currentMatchHistory = await cache.GetMatchIdsAsync(riotAccount.Puuid, 0);
             var lastMatch = await cache.GetMatchInfoAsync(currentMatchHistory[0]);
 
             var allyTeam = new TeamStats();
             var enemyTeam = new TeamStats();
 
             Dictionary<string, PlayerStats> statsByPlayers = [];
-            HashSet<string> processedMatches = [];
+            HashSet<string> processedMatches = [currentMatchHistory[0]];
 
+            Dictionary<string, string[]> matchHistoryIndices = [];
             foreach (var participant in lastMatch.Participants)
             {
                 var participantTeam = participant.TeamId switch
@@ -29,23 +30,27 @@ namespace LoLTracker.Services
                     TeamDto.MatchTeam.Red => enemyTeam,
                     _ => ThrowHelper.ThrowInvalidOperationException<TeamStats>()
                 };
-                participantTeam.Players.Add(statsByPlayers[participant.Puuid] = new()
+
+                var playerStats = new PlayerStats
                 {
                     PlayerName = $"{participant.RiotIdGameName}#{participant.RiotIdTagLine}",
                     ChampionName = participant.ChampionName,
                     ChampionId = participant.ChampionId,
-                });
-                if (!matchHistoryIndices.ContainsKey(participant.Puuid))
-                {
-                    matchHistoryIndices[participant.Puuid] = await cache.GetMatchIdsAsync(participant.Puuid, 1, iterations);
-                }
+                };
+                participantTeam.Players.Add(playerStats);
+                statsByPlayers[participant.Puuid] = playerStats;
+
+                matchHistoryIndices[participant.Puuid] = await cache.GetMatchIdsAsync(participant.Puuid, 0);
             }
 
-            for (int i = 0; i < iterations; i++)
+            int maxMatchesToProcess = Math.Min(iterations, matchHistoryIndices.Values.Max(indices => indices.Length));
+
+            foreach (var participant in lastMatch.Participants)
             {
-                foreach (var participant in lastMatch.Participants)
+                var indices = matchHistoryIndices[participant.Puuid];
+                var participantStats = statsByPlayers[participant.Puuid];
+                for (int i = 0; participantStats.MatchCount < maxMatchesToProcess; i++)
                 {
-                    var indices = matchHistoryIndices[participant.Puuid];
                     if (indices.Length <= i) continue;
                     var trackedMatchId = indices[i];
                     if (processedMatches.Contains(trackedMatchId)) continue;

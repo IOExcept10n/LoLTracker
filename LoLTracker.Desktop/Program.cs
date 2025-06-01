@@ -1,12 +1,7 @@
 ﻿using System;
-using Autofac;
 using Avalonia;
 using Avalonia.ReactiveUI;
 using Avalonia.Svg.Skia;
-using LoLTracker.Services;
-using LoLTracker.Views;
-using ReactiveUI;
-using Splat.Autofac;
 
 namespace LoLTracker.Desktop;
 

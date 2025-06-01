@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using CommunityToolkit.Diagnostics;
 using Newtonsoft.Json.Linq;
 using Splat;
 
@@ -108,8 +109,26 @@ namespace LoLTracker.Utilities
                 try
                 {
                     this.Log().Debug("Making HTTP GET request to {Uri}", uri);
-                    var response = await client.GetAsync(uri);
-                    response.EnsureSuccessStatusCode();
+                    HttpResponseMessage response;
+                    int attempts = 0;
+                    do
+                    {
+                        response = await client.GetAsync(uri);
+                        if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                        {
+                            attempts++;
+                            if (attempts >= 3)
+                            {
+                                this.Log().Error("Couldn't process the request because of TooManyRequests");
+                                return ThrowHelper.ThrowInvalidOperationException<JToken>("Too many requests. Please, wait a few minutes until sending new requests.");
+                            }
+                            this.Log().Warn("Received TooManyRequests, throttle for attempt {attempt}/3...", attempts);
+                            await Task.Delay(1000);
+                            continue;
+                        }
+                        response.EnsureSuccessStatusCode();
+                        break;
+                    } while (attempts < 3);
                     var content = await response.Content.ReadAsStringAsync();
                     this.Log().Debug("Received response with status code {StatusCode}", response.StatusCode);
                     return JToken.Parse(content);

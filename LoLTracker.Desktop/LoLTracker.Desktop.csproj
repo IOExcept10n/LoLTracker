@@ -6,8 +6,19 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+	<Title>LoLTracker</Title>
+	<AssemblyVersion>1.0.0</AssemblyVersion>
+	<FileVersion>1.0.0</FileVersion>
+	<Copyright>Copyright © 2025 IOException</Copyright>
+	<Authors>IOExcept10n</Authors>
+	<Description>An app that predicts League of Legends (LoL) match win probability</Description>
+	<PackageIcon>logo.png</PackageIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>logo.ico</ApplicationIcon>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="logo.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" Version="11.3.0" />
